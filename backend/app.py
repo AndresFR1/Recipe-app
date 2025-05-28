@@ -11,7 +11,7 @@ API_URL = "https://www.themealdb.com/api/json/v1/1" # URL base de la API externa
 
 @app.route("/api/search")
 # Definición de la ruta `/api/search` Le dice a Flask que la función que sigue (`search_recipes`) debe ejecutarse cada vez que una petición HTTP
-# (por defecto, GET) llegue a la URL `/api/search` en tu servidor Flask.
+# (por defecto, GET) llegue a la URL `/api/search` en el servidor Flask.
 
 def search_recipes(): # Función para buscar recetas - Define la función de Python que manejará las peticiones a la ruta `/api/search`.
 
