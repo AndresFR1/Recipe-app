@@ -13,6 +13,7 @@ export default function Home() {
 
   return (
     <div>
+      <h1>Welcome to Recipe App</h1>
       <SearchBar onSearch={search} />
       <div className="recipes-grid">
         {recipes.map((recipe) => (

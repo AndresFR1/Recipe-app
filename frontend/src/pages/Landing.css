@@ -1,0 +1,33 @@
+.landing-container{
+    background-image: url('https://images.unsplash.com/photo-1504674900247-0877df9cc836');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    width: 100vw;
+}
+
+.landing-content{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */ 
+}
+
+.landing-title{
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #ffeeee;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.landing-subtitle{
+    font-size: 1.2rem;
+    color: #ffeeee;
+    text-align: center;
+    margin-top: 10px;
+}
+

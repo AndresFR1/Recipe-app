@@ -1,40 +1,50 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import requests
-# Importar las bibliotecas necesarias
+from extensions import db, bcrypt, jwt
 
 
 app = Flask(__name__)
 CORS(app)
 
-API_URL = "https://www.themealdb.com/api/json/v1/1" # URL base de la API externa
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:admin@localhost:3306/mysql93'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['JWT_SECRET_KEY'] = '444111'
+
+db.init_app(app)
+bcrypt.init_app(app)
+jwt.init_app(app)
+
+API_URL = "https://www.themealdb.com/api/json/v1/1"
 
 @app.route("/api/search")
-# Definición de la ruta `/api/search` Le dice a Flask que la función que sigue (`search_recipes`) debe ejecutarse cada vez que una petición HTTP
-# (por defecto, GET) llegue a la URL `/api/search` en el servidor Flask.
+def search_recipes():
+    query = request.args.get("q")
+    if not query:
+        return jsonify({"error": "Falta el parámetro de búsqueda"}), 400
 
-def search_recipes(): # Función para buscar recetas - Define la función de Python que manejará las peticiones a la ruta `/api/search`.
+    response = requests.get(f"{API_URL}/search.php", params={"s": query})
+    if response.status_code != 200:
+        return jsonify({"error": "Error al consultar la API externa"}), 500
 
-    query = request.args.get("q") # Obtener el parámetro de búsqueda
+    data = response.json()
+    return jsonify(data)
 
-    if not query: # Verificación del parámetro de búsqueda
-    
-        return jsonify({"error": "Missing query parameter"}), 400 # Retornar error si falta el parámetro
-        
-        
-    response = requests.get(f"{API_URL}/search.php?s={query}") # Hacer la petición a la API de TheMealDB
-    
-    return jsonify(response.json()) # Retornar la respuesta de la API 
-    
+@app.route("/api/recipe/<id>")
+def get_recipe(id):
+    response = requests.get(f"{API_URL}/lookup.php", params={"i": id})
+    if response.status_code != 200:
+        return jsonify({"error": "Error al consultar la API externa"}), 500
 
-@app.route("/api/recipe/<id>") # Definición de la ruta `/api/recipe/<id>` Esta ruta está diseñada para obtener una receta específica por su ID.
+    data = response.json()
+    return jsonify(data)
 
-def get_recipe(id): #Función para obtener una receta por ID
+import models
+from RegisterRoute import register_bp
+from LoginRoute import login_bp
 
-    response = requests.get(f"{API_URL}/lookup.php?i={id}") # Hacer la petición a la API xterna para obtener una receta por ID
+app.register_blueprint(register_bp)
+app.register_blueprint(login_bp)
 
-    return jsonify(response.json()) # Retornar la respuesta de la API 
-
-if __name__ == "__main__": # Bloque de ejecución principal
-    app.run(debug=True) # Iniciar el servidor Flask
-    
+if __name__ == "__main__":
+    app.run(debug=True)
